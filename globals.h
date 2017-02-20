@@ -19,7 +19,7 @@
 #define true                        1
 #define false                       0
     
-#define VIRTUAL_GROUND              1024  // TODO: make variable
+#define VIRTUAL_GROUND              2048  // TODO: make variable
 
 // Define the AMux channels
 #define two_electrode_config_ch     0

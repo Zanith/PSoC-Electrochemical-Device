@@ -25,7 +25,7 @@
 
 // define how big to make the arrays for the lut for dac and how big
 // to make the adc data array 
-#define MAX_LUT_SIZE 4000
+#define MAX_LUT_SIZE 5000
 #define ADC_CHANNELS 4
 
 #define Work_electrode_resistance 1400  // ohms, estimate of resistance from SC block to the working electrode pin
@@ -101,8 +101,8 @@ CY_ISR(dacInterrupt)
     lut_value = waveform_lut[lut_index];
 }
 CY_ISR(adcInterrupt){
-    ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
-    //ADC_array[0].data[lut_index] = lut_value;
+    //ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
+    ADC_array[0].data[lut_index] = lut_value;
 }
 
 CY_ISR(adcAmpInterrupt){
