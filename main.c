@@ -238,15 +238,15 @@ int main()
                     }
                     LCD_Position(0,0);
                     LCD_PrintString("Cyclic volt running");
+                    lut_index = 0;
                     HardwareWakeup();  // start the hardware
-                    CyDelay(10);
                     DAC_SetValue(lut_value);
                     CyDelay(1);  // let the electrode voltage settle
                     ADC_SigDel_StartConvert();  // start the converstion process of the delta sigma adc so it will be ready to read when needed
                     CyDelay(5);
                     PWM_isr_WriteCounter(100);  // set the pwm timer so that it will trigger adc isr first
                     //ADC_array[0].data[lut_index] = 256*lut_index+lut_value;
-                    lut_index = 0;
+                    
                     ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16();  // Hack, get first adc reading, timing element doesn't reverse for some reason
                     isr_dac_Enable();  // enable the interrupts to start the dac
                     isr_adc_Enable();  // and the adc
@@ -334,6 +334,7 @@ int main()
                     }
                 }
                 uint16 dac_value = Convert2Dec(&OUT_Data_Buffer[2], 4);  // get the voltage the user wants and set the dac
+                lut_index = 0;
                 DAC_SetValue(dac_value);
                 
                 ADC_SigDel_StartConvert();
@@ -342,7 +343,7 @@ int main()
                 buffer_size_data_pts = Convert2Dec(&OUT_Data_Buffer[7], 4);  // how many data points to collect in each adc channel before exporting the data
                 buffer_size_bytes = 2*(buffer_size_data_pts + 1); // add 1 bit for the termination code and double size for bytes from uint16 data
                 adc_recording_channel = 0;
-                lut_index = 0; 
+                 
                 CyDelay(10);
                 isr_adcAmp_Enable();
                 break;
@@ -387,9 +388,14 @@ void HardwareWakeup(void){  // wakeup all the components that have to be on for 
     ADC_SigDel_Wakeup();
     TIA_Wakeup();
     VDAC_TIA_Wakeup();
-    Opamp_Aux_Wakeup();
-    PWM_isr_Wakeup();
     DAC_Wakeup();
+    CyDelay(1);
+    DAC_SetValue(lut_value);
+    CyDelay(10);
+    Opamp_Aux_Wakeup();
+    
+    PWM_isr_Wakeup();
+    
 }
 
 void HardwareSleep(void){  // put to sleep all the components that have to be on for a reading
