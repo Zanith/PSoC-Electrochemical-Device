@@ -93,16 +93,20 @@ CY_ISR(dacInterrupt)
         isr_dac_Disable();
         //LCD_Position(0,0);
         //LCD_PrintString("Cyclic volt done");
+        //LCD_Position(1,0);
+        //sprintf(LCD_str, "e2:%d|%d", lut_index, lut_length);
+        //LCD_PrintString(LCD_str);
         ADC_array[0].data[lut_index] = 0xC000;  // mark that the data array is done
         HardwareSleep();
         lut_index = 0; 
         USB_Export_Data((uint8*)"Done", 5); // calls a function in an isr but only after the current isr has been disabled
+
     }
     lut_value = waveform_lut[lut_index];
 }
 CY_ISR(adcInterrupt){
-    //ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
-    ADC_array[0].data[lut_index] = lut_value;
+    ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
+    //ADC_array[0].data[lut_index] = lut_value;
 }
 
 CY_ISR(adcAmpInterrupt){
@@ -173,12 +177,12 @@ int main()
                 uint8 user_ch = OUT_Data_Buffer[1]-'0';
                 
                 if (user_ch <= ADC_CHANNELS) { // check for buffer overflow
-                    // 2*(lut_length+1) because the data is 2 times as long as it has to 
+                    // 2*(lut_length+2) because the data is 2 times as long as it has to 
                     // be sent as 8-bits and the data is 16 bit, +1 is for the 0xC000 finished signal
                     //LCD_Position(1,0);
                     //sprintf(LCD_str, "Edf:%d", 2*(lut_length+2));
                     //LCD_PrintString(LCD_str);
-                    USB_Export_Data(&ADC_array[user_ch].usb[0], 2*(lut_length));  
+                    USB_Export_Data(&ADC_array[user_ch].usb[0], 2*(lut_length+1));  
                     
                 }
                 else {

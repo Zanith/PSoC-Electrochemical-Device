@@ -42,8 +42,8 @@ uint16 LUT_MakeTriangleWave(uint16 start_value, uint16 end_value){
     
     _lut_index = LUT_make_side(VIRTUAL_GROUND, start_value, 0);
     
-    _lut_index = LUT_make_side(start_value+1, end_value, _lut_index);
-    _lut_index = LUT_make_side(end_value, VIRTUAL_GROUND, _lut_index);
+    _lut_index = LUT_make_side(start_value, end_value, _lut_index-1);
+    _lut_index = LUT_make_side(end_value, VIRTUAL_GROUND, _lut_index-1);
     LCD_Position(1,0);
     LCD_PutChar('|');
     LCD_PrintDecUint16(_lut_index);
@@ -54,7 +54,7 @@ uint16 LUT_MakeTriangleWave(uint16 start_value, uint16 end_value){
 
 int LUT_make_side(uint16 start, uint16 end, uint16 index) {
     if (start < end) {
-        for (uint16 value = start; value < end; value++) {
+        for (uint16 value = start; value <= end; value++) {
             waveform_lut[index] = value;
             index ++;
         }
