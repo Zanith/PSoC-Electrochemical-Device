@@ -35,7 +35,6 @@ TODO:  Move the DAC related APIS to new DAC file
 
 uint8 helper_check_voltage_source(void) {
     // start eeprom and read the value at voltage source address
-    
     return helper_Readbyte_EEPROM(VDAC_ADDRESS);
 }
 

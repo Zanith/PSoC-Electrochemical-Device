@@ -11,6 +11,8 @@
 
 #if !defined(GLOBALS_H)
 #define GLOBALS_H
+    
+#include "cytypes.h"
 
 
 /**************************************
@@ -45,6 +47,13 @@
     
 #define DVDAC_channel 1
 #define VDAC_channel 0
+    
+    
+/**************************************
+*        Global Variables
+**************************************/   
+    
+//uint16 dac_ground_value = VIRTUAL_GROUND;  // initialize it to be set for the DVDAC and a 1 mV per step
     
     
 #endif    

@@ -3,28 +3,7 @@
   <Group key="Analog2">
     <Group key="MUX_ROUTING" />
     <Group key="NET_ROUTING" />
-    <Group key="PLACEMENT">
-      <Group key="F(OpAmp,3)">
-        <Data key="INST_GUID_PATH" value="ca5b77bb-249e-47b4-995c-bced3d873752/23e176f5-2d49-415c-92e4-85b5cde510c7" />
-        <Data key="RTL_NAME_SUFFIX" value="" />
-      </Group>
-      <Group key="F(SC,2)">
-        <Data key="INST_GUID_PATH" value="30a6d7fe-00cd-48a9-9e3b-916b88d62162/3a27f8a8-9c60-41bd-ad45-fa56da314404" />
-        <Data key="RTL_NAME_SUFFIX" value="" />
-      </Group>
-      <Group key="F(VIDAC,0)">
-        <Data key="INST_GUID_PATH" value="c9f3e562-b003-43e5-b69f-8169eb86d179/77277736-35f9-4c5f-acca-40955c679352" />
-        <Data key="RTL_NAME_SUFFIX" value="" />
-      </Group>
-      <Group key="F(VIDAC,1)">
-        <Data key="INST_GUID_PATH" value="8ab8b474-fd87-4bae-8399-88b9a28a5be9/7b0745a3-9643-40c1-b963-3ed8a3da0805" />
-        <Data key="RTL_NAME_SUFFIX" value="" />
-      </Group>
-      <Group key="F(VIDAC,2)">
-        <Data key="INST_GUID_PATH" value="282c088a-d72a-404f-831c-f7183f29da8a/7b0745a3-9643-40c1-b963-3ed8a3da0805" />
-        <Data key="RTL_NAME_SUFFIX" value="" />
-      </Group>
-    </Group>
+    <Group key="PLACEMENT" />
     <Group key="RIPUP_MUX" />
     <Group key="RIPUP_ROUTE" />
     <Group key="ULTRA_NET_ROUTING" />
@@ -3607,7 +3586,7 @@
   <Group key="Pin2">
     <Group key="3d39ec19-0fe2-40b0-adca-ead8b6f7bf1d">
       <Group key="0">
-        <Data key="Port Format" value="3,2" />
+        <Data key="Port Format" value="3,3" />
       </Group>
     </Group>
     <Group key="8a73c3bb-5d1d-4e32-ae9d-7306578b684c">
@@ -3657,17 +3636,12 @@
     </Group>
     <Group key="08074fec-0ff6-4280-af2e-a5ee00a9981a">
       <Group key="0">
-        <Data key="Port Format" value="0,4" />
+        <Data key="Port Format" value="0,7" />
       </Group>
     </Group>
     <Group key="3460172e-29e7-4539-a586-f8c21160916f">
       <Group key="0">
         <Data key="Port Format" value="6,2" />
-      </Group>
-    </Group>
-    <Group key="52280344-61c6-4e49-afe9-d6922d6c8479">
-      <Group key="0">
-        <Data key="Port Format" value="3,5" />
       </Group>
     </Group>
     <Group key="77715107-f8d5-47e5-a629-0fb83101ac6b">
@@ -3683,11 +3657,6 @@
     <Group key="b2d132b3-c775-4961-b96c-6741bbe3c25a">
       <Group key="0">
         <Data key="Port Format" value="6,0" />
-      </Group>
-    </Group>
-    <Group key="b20862c8-587e-42b4-a42f-6e12cf45a8f9">
-      <Group key="0">
-        <Data key="Port Format" value="4,5" />
       </Group>
     </Group>
     <Group key="c2706f8d-e8e8-4633-b999-999bd19dbfe5/ed092b9b-d398-4703-be89-cebf998501f6">
@@ -3734,7 +3703,22 @@
       </Group>
     </Group>
     <Group key="UnAssigned Pins" />
-    <Group key="Unlocked Pins" />
+    <Group key="Unlocked Pins">
+      <Group key="52280344-61c6-4e49-afe9-d6922d6c8479">
+        <Group key="0">
+          <Group key="131323024882302894">
+            <Data key="Port Format" value="3,5" />
+          </Group>
+        </Group>
+      </Group>
+      <Group key="b20862c8-587e-42b4-a42f-6e12cf45a8f9">
+        <Group key="0">
+          <Group key="131323024882327958">
+            <Data key="Port Format" value="4,5" />
+          </Group>
+        </Group>
+      </Group>
+    </Group>
   </Group>
   <Group key="PlaceDir">
     <Data key="count" value="0" />

@@ -66,11 +66,10 @@ uint8 AMux_channel_select = 0;  // Let the user choose to use the two electrode 
 uint16 timer_period;
 uint16 waveform_lut[MAX_LUT_SIZE];  // look up table for waveform values to put into msb DAC
 uint16 lut_index = 0;  // look up table index
-int16 checker = 0;
 uint8 adc_recording_channel = 0;
 uint16 lut_value;  // value need to load DAC
 uint16 lut_length = 3000;  // how long the look up table is,initialize large so when starting isr the ending doesn't get triggered
-uint16 lut_hold;
+uint16 lut_hold = 0;
 uint8 adc_hold;
 uint8 counter = 0;
 uint16 buffer_size_bytes;
@@ -91,8 +90,6 @@ CY_ISR(dacInterrupt)
     if (lut_index >= lut_length) { // all the data points have been given
         isr_adc_Disable();
         isr_dac_Disable();
-        //LCD_Position(0,0);
-        //LCD_PrintString("Cyclic volt done");
         //LCD_Position(1,0);
         //sprintf(LCD_str, "e2:%d|%d", lut_index, lut_length);
         //LCD_PrintString(LCD_str);
@@ -111,10 +108,7 @@ CY_ISR(adcInterrupt){
 
 CY_ISR(adcAmpInterrupt){
     ADC_array[adc_recording_channel].data[lut_index] = ADC_SigDel_GetResult16(); 
-
-    //ADC_array[adc_recording_channel].data[lut_index] = checker;
     lut_index++;  
-    //checker++;
     if (lut_index >= buffer_size_data_pts) {
         ADC_array[adc_recording_channel].data[lut_index] = 0xC000;
         counter += 1;
@@ -157,8 +151,10 @@ int main()
             }
             USBFS_EnableOutEP(OUT_ENDPOINT);  // reenable OUT ENDPOINT
         }
-        Input_Flag = USB_CheckInput(OUT_Data_Buffer);  // check if there is a response from the computer
-
+        if (Input_Flag == false) {  // make sure any input has already been dealt with
+            Input_Flag = USB_CheckInput(OUT_Data_Buffer);  // check if there is a response from the computer
+        }
+        
         if (Input_Flag == true) {
             switch (OUT_Data_Buffer[0]) { 
                 
@@ -211,8 +207,12 @@ int main()
                 ADC_SigDel_SetBufferGain(ADC_buffer_index);
                 if (OUT_Data_Buffer[5] == 'T') {
                     tia_mux.use_extra_resistor = true;
-                    tia_mux.user_channel = OUT_Data_Buffer[7]-'0';
+                    tia_mux.user_channel = OUT_Data_Buffer[7]-'0';  // not used yet
                     OUT_Data_Buffer[5] = 0;
+                    AMux_TIA_resistor_bypass_Connect(0);
+                }
+                else {
+                    AMux_TIA_resistor_bypass_Disconnect(0);
                 }
                 break;
             case 'V': ;  // check if the device should use the dithering VDAC of the VDAC
@@ -229,10 +229,8 @@ int main()
                     DAC_Sleep();
                 }
                 break;
-            case 'R': ;
+            case 'R': ;  // Start a cyclic voltammetry experiment
                 if (!isr_dac_GetState()){  // enable the dac isr if it isnt already enabled
-                    /* set the electrode voltage to the lowest voltage first, then start ADC and wait for it to initiate
-                    before starting the interrupts  */
                     if (isr_adcAmp_GetState()) {  // User has started cyclic voltammetry while amp is already running so disable amperometry
                         isr_adcAmp_Disable();
                     }
@@ -290,7 +288,7 @@ int main()
                 LCD_PrintString(LCD_str);
                 
                 break;
-            case 'Q': ; 
+            case 'Q': ;  // Hack to let the device to run a chronoamperometry experiment, not working properly yet
                 PWM_isr_Wakeup();
                 uint16 baseline = Convert2Dec(&OUT_Data_Buffer[2], 4);
                 uint16 pulse = Convert2Dec(&OUT_Data_Buffer[7], 4);
@@ -304,9 +302,7 @@ int main()
                 
                 PWM_isr_Sleep();
                 break;
-            case 'S': ; // getting the starting bit of the dacs, use ; after : to make an empty statement to prevent error
-                /*Get the string of data that contains the start and end voltges of the
-                triangle wave and produce the look up table */
+            case 'S': ; // make a look up table (lut) for a cyclic voltammetry experiment
                 PWM_isr_Wakeup();
                 uint16 low_amplitude = Convert2Dec(&OUT_Data_Buffer[2], 4);
                 uint16 high_amplitude = Convert2Dec(&OUT_Data_Buffer[7], 4);
