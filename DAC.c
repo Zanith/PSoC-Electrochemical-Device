@@ -37,12 +37,12 @@ void DAC_Start(void) {
     
     if (selected_voltage_source == VDAC_IS_DVDAC) {
         DVDAC_Start();
-        //VIRTUAL_GROUND / 1 mV the value of the DAC that will make 0 V across the working and aux electrodes 
+        dac_ground_value = VIRTUAL_GROUND;  //VIRTUAL_GROUND / 1 mV the value of the DAC that will make 0 V across the working and aux electrodes 
         AMux_V_source_Select(DVDAC_channel);
     }
     else {
         VDAC_source_Start();
-        // value of dac to make 0 V across working and aux electrodes
+        dac_ground_value = VIRTUAL_GROUND / 16;  // value of dac to make 0 V across working and aux electrodes
         AMux_V_source_Select(VDAC_channel);
     }
 }

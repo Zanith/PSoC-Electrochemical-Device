@@ -54,7 +54,7 @@
 **************************************/   
     
 //uint16 dac_ground_value = VIRTUAL_GROUND;  // initialize it to be set for the DVDAC and a 1 mV per step
-    
+uint16 dac_ground_value;    
     
 #endif    
 /* [] END OF FILE */

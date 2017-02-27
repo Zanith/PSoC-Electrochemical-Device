@@ -102,8 +102,8 @@ CY_ISR(dacInterrupt)
     lut_value = waveform_lut[lut_index];
 }
 CY_ISR(adcInterrupt){
-    ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
-    //ADC_array[0].data[lut_index] = lut_value;
+    //ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
+    ADC_array[0].data[lut_index] = lut_value;
 }
 
 CY_ISR(adcAmpInterrupt){
