@@ -1,9 +1,9 @@
 /*******************************************************************************
-* File Name: helper_functions.h
+* File Name: helper_functions.c
 *
 * Description:
-*  Functions to used by main.
-TODO:  Move the DAC related APIS to new DAC file 
+*  Functions used by main.
+*  basically EEPROM functions at this point.
 *
 **********************************************************************************
  * Copyright Naresuan University, Phitsanulok Thailand
@@ -18,6 +18,7 @@ TODO:  Move the DAC related APIS to new DAC file
 *
 * Summary:
 *  Look in the EEPROM to for what Voltage source is selected
+  # TODO: dont look in eeprom first, check selected_voltage_source before going to the eeprom
 *
 * Parameters:
 *
@@ -47,16 +48,10 @@ uint8 helper_check_voltage_source(void) {
 *  stops the other voltage source if it was on and starts and puts to sleep the current 
 *
 * Parameters:
-*
-* Return:
-*  VDAC_NOT_SET [0] - if no voltage source has been selected yet
-*  VDAC_IS_VDAC [1] - user indicated no external capacitor is installed, 
-*                     so 8-bit VDAC should be used
-*  VDAC_IS_DVDAC [2] - user has indicated and external capacitor is installed
-*                      so the dithering VDAC (DVDAC) should be set
+*  uint8 voltage_source: which voltage source has been selected
 *
 * Global variables:
-*  OUT_ENDPOINT:  number that is the endpoint coming out of the computer
+*  selected_voltage_source:  which DAC is to be used
 *
 *******************************************************************************/
 
@@ -66,20 +61,13 @@ void helper_set_voltage_source(uint8 voltage_source) {
     helper_Writebyte_EEPROM(voltage_source, VDAC_ADDRESS);
     
     if (selected_voltage_source == VDAC_IS_DVDAC) {
-        // the DVDAC is being used so set the AMux to the correct channel
-        //AMux_V_source_Select(DVDAC_channel);
-        VDAC_source_Stop();
-//        DVDAC_Start();
-//        DVDAC_Sleep();
+        VDAC_source_Stop();  // incase the other DAC is on, turn it off
         LCD_Position(1,0);
         LCD_PrintString("DVDAC AMux");
         
     }
     else {
-        //AMux_V_source_Select(VDAC_channel);
-        DVDAC_Stop();
-//        VDAC_source_Start();
-//        VDAC_source_Sleep();
+        DVDAC_Stop();  // incase the other DAC is on, turn it off
         LCD_Position(1,0);
         LCD_PrintString("VDAC AMux");
     }

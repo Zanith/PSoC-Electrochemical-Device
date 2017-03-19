@@ -5,7 +5,6 @@
 *  This file contains the function prototypes and constants used for
 *  the custom DAC, an 8-bit VDAC or DVDAC selectable by the user
 *
-*
 **********************************************************************************
  * Copyright Naresuan University, Phitsanulok Thailand
  * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
@@ -16,7 +15,6 @@
 
 #include <project.h>
 #include "cytypes.h"
- 
 #include "helper_functions.h"
 #include "globals.h"
 

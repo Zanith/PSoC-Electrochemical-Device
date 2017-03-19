@@ -1,14 +1,14 @@
-/* ========================================
- *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
- *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
- *
- * ========================================
-*/
+/*******************************************************************************
+* File Name: lut_protocols.h
+*
+* Description:
+*  This file contains the function prototypes and constants used for
+*  the protocols to create look up tables
+*
+**********************************************************************************
+ * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
+ * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
+*********************************************************************************/
 #if !defined(LUT_PROTOCOLS_H)
 #define LUT_PROTOCOLS_H
 

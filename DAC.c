@@ -2,9 +2,9 @@
 * File Name: DAC.c
 *
 * Description:
+*  An abstraction of 2 different DACs, an 8-bit VDAC or 12-bit DVDAC.
 *  This file contains the source code for
-*  the custom DAC, an 8-bit VDAC or DVDAC selectable by the user
-*
+*  the custom DAC, an 8-bit VDAC or 12-bit DVDAC selectable by the user
 *
 **********************************************************************************
  * Copyright Naresuan University, Phitsanulok Thailand
@@ -19,21 +19,21 @@
 *******************************************************************************
 *
 * Summary:
-*  Start the correct voltage source.  Figure what source is being used, set the 
-*   correct AMux settings and start the correct source
+*  Start the correct voltage source.  
+*  Figure what source is being used, set the  correct AMux settings and start 
+*  the correct source
 *
 * Parameters:
 *
 *
-* Global variables:
+*  Global variables:
 *  selected_voltage_source:  voltage source that is set to run, 
 *      [VDAC_IS_VDAC or VDAC_IS_DVDAC]
 *
 *******************************************************************************/
 
 void DAC_Start(void) {
-    selected_voltage_source = helper_check_voltage_source();
-    // helper_set_voltage_source(selected_voltage_source);
+    selected_voltage_source = helper_check_voltage_source();  // check which DAC is being used
     
     if (selected_voltage_source == VDAC_IS_DVDAC) {
         DVDAC_Start();
@@ -107,7 +107,7 @@ void DAC_Wakeup(void) {
 *  Set the value of the correct voltage source
 *
 * Parameters:
-*
+*  uint16 value: number to place in the appropriate DAC
 *
 * Global variables:
 *  selected_voltage_source:  voltage source that is set to run, 

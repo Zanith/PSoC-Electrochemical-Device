@@ -5,7 +5,7 @@
 *  Protocols to calibrate the current measuring circuitry i.e. TIA / delta sigma ADC with an IDAC
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
+ * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
  * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
 
@@ -28,7 +28,24 @@ static void Calibrate_Hardware_Wakeup(void);
 static void calibrate_step(uint16 IDAC_value, uint8 IDAC_index);
 static void Calibrate_Hardware_Sleep(void);
 
-/* Calibrate the TIA circuit each time the current gain settings are changed*/
+/**/
+
+/******************************************************************************
+* Function Name: calibrate_TIA
+*******************************************************************************
+*
+* Summary:
+*  Calibrate the TIA circuit each time the current gain settings are changed
+*
+* Parameters:
+*  uint8 TIA_resistor_value_index: index of whick TIA resistor to use, Supplied by USB input
+*  uint8 ADC_buffer_index: which ADC buffer is used, gain = 2**ADC_buffer_index
+*
+* Return:
+*  array of 20 bytes is loaded into the USB in endpoint (into the computer)
+*
+*******************************************************************************/
+
 void calibrate_TIA(uint8 TIA_resistor_value_index, uint8 ADC_buffer_index) {
     // The IDAC only 
     
@@ -52,7 +69,7 @@ void calibrate_TIA(uint8 TIA_resistor_value_index, uint8 ADC_buffer_index) {
     if (transfer_int > 250) {  // the TIA needs too much current, reduce needs by half.  Is needed for the 20k resistor setting
         transfer_int /= 2;
     }
-    // is DRY but not sure how to fix
+    // is not DRY but not sure how to fix
     IDAC_calibrate_SetPolarity(IDAC_calibrate_SINK);
     calibrate_step(transfer_int, 0);
     calibrate_step(transfer_int/2, 1);
@@ -69,6 +86,23 @@ void calibrate_TIA(uint8 TIA_resistor_value_index, uint8 ADC_buffer_index) {
     USB_Export_Data(calibrate_array.usb, 20);
 }
 
+/******************************************************************************
+* Function Name: calibrate_step
+*******************************************************************************
+*
+* Summary:
+*  Gets a single calibration data point by setting the calibration IDAC and reading
+*  the ADC count and saving them in the calibration_array
+*
+* Parameters:
+*  uint16 IDAC_value: value to set the calibration  IDAC to before measuring with the ADC
+*  uint8 IDAC_index: index of where in calibration_array to save the IDAC and ADC data
+*
+* Global variables:
+*  calibration_array: array of saved IDAC and ADC values
+*
+*******************************************************************************/
+
 static void calibrate_step(uint16 IDAC_value, uint8 IDAC_index) {
     IDAC_calibrate_SetValue(IDAC_value);
     CyDelay(100);  // allow the ADC to settle
@@ -77,6 +111,15 @@ static void calibrate_step(uint16 IDAC_value, uint8 IDAC_index) {
     calibrate_array.data[IDAC_index+5] = ADC_value;  // 5 because of the way the array is set up
 }
 
+/******************************************************************************
+* Function Name: Calibrate_Hardware_Wakeup
+*******************************************************************************
+*
+* Summary:
+*  Wakeup all the hardware needed for the calibration routine and set the AMux to 
+*  the correct channel
+*
+*******************************************************************************/
 
 static void Calibrate_Hardware_Wakeup(void) {
     AMux_TIA_input_Select(AMux_TIA_calibrat_ch);
@@ -84,6 +127,16 @@ static void Calibrate_Hardware_Wakeup(void) {
     VDAC_TIA_Wakeup();
     ADC_SigDel_Wakeup();
 }
+
+/******************************************************************************
+* Function Name: Calibrate_Hardware_Sleep
+*******************************************************************************
+*
+* Summary:
+*  Put to sleep all the hardware needed for the calibration routine, stop  
+*  the IDAC, and set the AMux to the correct channel
+*
+*******************************************************************************/
 
 static void Calibrate_Hardware_Sleep(void) {
     AMux_TIA_input_Select(AMux_TIA_measure_ch);

@@ -6,7 +6,7 @@
 *  the protocols to calibrate a TIA / delta sigma ADC with an IDAC
 *
 **********************************************************************************
- * Copyright Naresuan University, Phitsanulok Thailand
+ * Copyright Kyle Vitautas Lopin, Naresuan University, Phitsanulok Thailand
  * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
 *********************************************************************************/
 
@@ -25,8 +25,8 @@
   
     
 union calibrate_data_usb_union {
-    uint8 usb[4*Number_calibration_points];
-    int16 data[2*Number_calibration_points];
+    uint8 usb[4*Number_calibration_points];  // 2 * the number of data points
+    int16 data[2*Number_calibration_points];  // 2 * data points because 1 for the IDAC value and the other for the ADC result
 };
 union calibrate_data_usb_union calibrate_array;  // allocate space to put adc measurements
 /* This union will save the calibration results and the IDAC values used in the format of

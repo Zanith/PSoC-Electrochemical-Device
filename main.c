@@ -5,8 +5,6 @@
 * Description:
 *  Main program to use PSoC 5LP as an electrochemcial device
 *
-* TODO: Add nore details
-*
 **********************************************************************************
  * Copyright Naresuan University, Phitsanulok Thailand
  * Released under Creative Commons Attribution-ShareAlike  3.0 (CC BY-SA 3.0 US)
@@ -48,7 +46,6 @@ union small_data_usb_union {
 };
 union small_data_usb_union amp_union;
 
-
 /* make buffers for the USB ENDPOINTS */
 uint8 IN_Data_Buffer[MAX_NUM_BYTES];
 uint8 OUT_Data_Buffer[MAX_NUM_BYTES];
@@ -74,6 +71,7 @@ uint8 adc_hold;
 uint8 counter = 0;
 uint16 buffer_size_bytes;
 uint16 buffer_size_data_pts = 4000;  // prevent the isr from firing
+uint16 dac_value_hold = 0;
 
 
 /* function prototypes */
@@ -85,8 +83,10 @@ uint16 Convert2Dec(uint8 array[], uint8 len);
 
 CY_ISR(dacInterrupt)
 {
+    
     DAC_SetValue(lut_value);
     lut_index++;
+    dac_value_hold = lut_value;
     if (lut_index >= lut_length) { // all the data points have been given
         isr_adc_Disable();
         isr_dac_Disable();
@@ -103,7 +103,8 @@ CY_ISR(dacInterrupt)
 }
 CY_ISR(adcInterrupt){
     //ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16(); 
-    ADC_array[0].data[lut_index] = lut_value;
+    //ADC_array[0].data[lut_index] = lut_value;
+    ADC_array[0].data[lut_index] = dac_value_hold;
 }
 
 CY_ISR(adcAmpInterrupt){
@@ -143,6 +144,7 @@ int main()
     
     LCD_Position(0,0);
     LCD_PrintString("amp build4b||");
+    helper_Writebyte_EEPROM(0, VDAC_ADDRESS);
     
     for(;;) {
         
@@ -171,7 +173,6 @@ int main()
                 
             case 'E': ; // User wants to export the data, the user can choose what ADC array to export
                 uint8 user_ch = OUT_Data_Buffer[1]-'0';
-                
                 if (user_ch <= ADC_CHANNELS) { // check for buffer overflow
                     // 2*(lut_length+2) because the data is 2 times as long as it has to 
                     // be sent as 8-bits and the data is 16 bit, +1 is for the 0xC000 finished signal
@@ -237,13 +238,15 @@ int main()
                     LCD_Position(0,0);
                     LCD_PrintString("Cyclic volt running");
                     lut_index = 0;
+                    lut_value = waveform_lut[0];
                     HardwareWakeup();  // start the hardware
-                    DAC_SetValue(lut_value);
+                    DAC_SetValue(lut_value);  // TODO:  Fix this is a mess
+                    //lut_index = 1;
+                    //lut_value = waveform_lut[1];
                     CyDelay(1);  // let the electrode voltage settle
                     ADC_SigDel_StartConvert();  // start the converstion process of the delta sigma adc so it will be ready to read when needed
                     CyDelay(5);
                     PWM_isr_WriteCounter(100);  // set the pwm timer so that it will trigger adc isr first
-                    //ADC_array[0].data[lut_index] = 256*lut_index+lut_value;
                     
                     ADC_array[0].data[lut_index] = ADC_SigDel_GetResult16();  // Hack, get first adc reading, timing element doesn't reverse for some reason
                     isr_dac_Enable();  // enable the interrupts to start the dac
